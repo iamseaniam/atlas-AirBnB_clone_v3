@@ -155,9 +155,13 @@ No known bugs at this time.
 
 ## Authors
 Alexa Orrico - [Github](https://github.com/alexaorrico) / [Twitter](https://twitter.com/alexa_orrico)  
+
 Jennifer Huang - [Github](https://github.com/jhuang10123) / [Twitter](https://twitter.com/earthtojhuang)
+
 Evan Maklre - [Github](https://github.com/EJMarkle)
+
 Raesean White [Github](https://github.com/ReyesxRoyal)
+
 Sean Montgomery [Github](https://github.com/iamseaniam)
 
 Second part of Airbnb: Joann Vuong
