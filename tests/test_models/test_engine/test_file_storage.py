@@ -113,3 +113,28 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(storage._FileStorage__file_path is None, "File doesn't exist")
+    def test_get(self):
+        """Test retrieval of an object by class and ID"""
+        new_state = State(name="California")
+        storage.new(new_state)
+        storage.save()
+        retrieved_state = storage.get(State, new_state.id)
+        self.assertEqual(new_state, retrieved_state)
+
+    @unittest.skipIf(storage._FileStorage__file_path is None, "File doesn't exist")
+    def test_count(self):
+        """Test counting objects in storage"""
+        initial_state_count = storage.count(State)
+        new_state1 = State(name="Florida")
+        new_state2 = State(name="Texas")
+        storage.new(new_state1)
+        storage.new(new_state2)
+        storage.save()
+        state_count_after_addition = storage.count(State)
+        self.assertEqual(initial_state_count + 2, state_count_after_addition)
+
+
+if __name__ == '__main__':
+    unittest.main()
