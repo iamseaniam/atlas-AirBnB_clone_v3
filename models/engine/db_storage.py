@@ -33,19 +33,16 @@ class DBStorage:
 
     def all(self, cls=None):
         """Query all objects of a particular class."""
-        from models.base_model import Base
-        from models import classes
         objects = {}
         if cls:
-            if type(cls) is str:
-                cls = classes.get(cls)
             for obj in self.__session.query(cls).all():
-                key = "{}.{}".format(type(obj).__name__, obj.id)
+                key = "{}.{}".format(cls.__name__, obj.id)
                 objects[key] = obj
         else:
-            for cl in classes.values():
-                for obj in self.__session.query(cl).all():
-                    key = "{}.{}".format(type(obj).__name__, obj.id)
+            from models.base_model import BaseModel
+            for cls in [State, City, User, Place, Amenity, Review]:
+                for obj in self.__session.query(cls).all():
+                    key = "{}.{}".format(cls.__name__, obj.id)
                     objects[key] = obj
         return objects
 
@@ -69,6 +66,20 @@ class DBStorage:
         Session = scoped_session(sessionmaker(bind=self.__engine,
                                               expire_on_commit=False))
         self.__session = Session()
+
+    def get(self, cls, id):
+        """Retrieve an object by class and ID."""
+        return self.__session.query(cls).get(id)
+
+    def count(self, cls=None):
+        """Count the number of objects in storage matching the given class."""
+        if cls:
+            return self.__session.query(cls).count()
+        else:
+            count = 0
+            for cls in [State, City, User, Place, Amenity, Review]:
+                count += self.__session.query(cls).count()
+        return count
 
     def close(self):
         """Call remove method on the private session attribute."""
