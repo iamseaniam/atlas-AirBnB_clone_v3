@@ -6,7 +6,7 @@ Contains the TestDBStorageDocs and TestDBStorage classes
 from datetime import datetime
 import inspect
 import models
-from models.engine import db_storage
+from models.engine.db_storage import DBStorage
 from models.amenity import Amenity
 from models.base_model import BaseModel
 from models.city import City
@@ -16,9 +16,8 @@ from models.state import State
 from models.user import User
 import json
 import os
-import pep8
+import pycodestyle
 import unittest
-DBStorage = db_storage.DBStorage
 classes = {"Amenity": Amenity, "City": City, "Place": Place,
            "Review": Review, "State": State, "User": User}
 
@@ -32,14 +31,14 @@ class TestDBStorageDocs(unittest.TestCase):
 
     def test_pep8_conformance_db_storage(self):
         """Test that models/engine/db_storage.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
+        pep8s = pycodestyle.StyleGuide(quiet=True)
         result = pep8s.check_files(['models/engine/db_storage.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
     def test_pep8_conformance_test_db_storage(self):
         """Test tests/test_models/test_db_storage.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
+        pep8s = pycodestyle.StyleGuide(quiet=True)
         result = pep8s.check_files(['tests/test_models/test_engine/\
 test_db_storage.py'])
         self.assertEqual(result.total_errors, 0,
@@ -47,9 +46,9 @@ test_db_storage.py'])
 
     def test_db_storage_module_docstring(self):
         """Test for the db_storage.py module docstring"""
-        self.assertIsNot(db_storage.__doc__, None,
+        self.assertIsNot(DBStorage.__doc__, None,
                          "db_storage.py needs a docstring")
-        self.assertTrue(len(db_storage.__doc__) >= 1,
+        self.assertTrue(len(DBStorage.__doc__) >= 1,
                         "db_storage.py needs a docstring")
 
     def test_db_storage_class_docstring(self):
@@ -87,27 +86,28 @@ class TestFileStorage(unittest.TestCase):
     def test_save(self):
         """Test that save properly saves objects to file.json"""
 
+
 class TestDBStorage(unittest.TestCase):
     """Test the DBStorage class"""
-    @unittest.skipIf(storage._DBStorage__engine is None, "DB doesn't exist")
+    @unittest.skipIf(DBStorage._DBStorage__engine is None, "DB doesn't exist")
     def test_get(self):
         """Test retrieval of an object by class and ID"""
         new_state = State(name="California")
-        storage.new(new_state)
-        storage.save()
-        retrieved_state = storage.get(State, new_state.id)
+        DBStorage.new(new_state)
+        DBStorage.save()
+        retrieved_state = DBStorage.get(State, new_state.id)
         self.assertEqual(new_state, retrieved_state)
 
-    @unittest.skipIf(storage._DBStorage__engine is None, "DB doesn't exist")
+    @unittest.skipIf(DBStorage._DBStorage__engine is None, "DB doesn't exist")
     def test_count(self):
         """Test counting objects in storage"""
-        initial_state_count = storage.count(State)
+        initial_state_count = DBStorage.count(State)
         new_state1 = State(name="Florida")
         new_state2 = State(name="Texas")
-        storage.new(new_state1)
-        storage.new(new_state2)
-        storage.save()
-        state_count_after_addition = storage.count(State)
+        DBStorage.new(new_state1)
+        DBStorage.new(new_state2)
+        DBStorage.save()
+        state_count_after_addition = DBStorage.count(State)
         self.assertEqual(initial_state_count + 2, state_count_after_addition)
 
 
