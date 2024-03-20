@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 """ console """
 
 import cmd
@@ -11,10 +12,17 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
-import shlex  # for splitting the line along spaces except in double quotes
+import shlex # for splitting the line along spaces except in double quotes
 
-classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
-           "Place": Place, "Review": Review, "State": State, "User": User}
+classes = {
+    "Amenity": Amenity,
+    "BaseModel": BaseModel,
+    "City": City,
+    "Place": Place,
+    "Review": Review,
+    "State": State,
+    "User": User
+}
 
 
 class HBNBCommand(cmd.Cmd):
@@ -46,10 +54,10 @@ class HBNBCommand(cmd.Cmd):
                 else:
                     try:
                         value = int(value)
-                    except:
+                    except ValueError:
                         try:
                             value = float(value)
-                        except:
+                        except ValueError:
                             continue
                 new_dict[key] = value
         return new_dict
@@ -63,11 +71,11 @@ class HBNBCommand(cmd.Cmd):
         if args[0] in classes:
             new_dict = self._key_value_parser(args[1:])
             instance = classes[args[0]](**new_dict)
+            print(instance.id)
+            instance.save()
         else:
             print("** class doesn't exist **")
             return False
-        print(instance.id)
-        instance.save()
 
     def do_show(self, arg):
         """Prints an instance as a string based on the class and id"""
@@ -125,8 +133,7 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, arg):
         """Update an instance based on the class name, id, attribute & value"""
         args = shlex.split(arg)
-        integers = ["number_rooms", "number_bathrooms", "max_guest",
-                    "price_by_night"]
+        integers = ["number_rooms", "number_bathrooms", "max_guest", "price_by_night"]
         floats = ["latitude", "longitude"]
         if len(args) == 0:
             print("** class name missing **")
@@ -140,23 +147,25 @@ class HBNBCommand(cmd.Cmd):
                                 if args[2] in integers:
                                     try:
                                         args[3] = int(args[3])
-                                    except:
+                                    except ValueError:
                                         args[3] = 0
                                 elif args[2] in floats:
                                     try:
                                         args[3] = float(args[3])
-                                    except:
+                                    except ValueError:
                                         args[3] = 0.0
-                            setattr(models.storage.all()[k], args[2], args[3])
-                            models.storage.all()[k].save()
+                                setattr(models.storage.all()[k], args[2], args[3])
+                                models.storage.all()[k].save()
+                            else:
+                                print("** value missing **")
                         else:
-                            print("** value missing **")
+                            print("** attribute name missing **")
                     else:
-                        print("** attribute name missing **")
+                        print("** no instance found **")
                 else:
-                    print("** no instance found **")
+                    print("** instance id missing **")
             else:
-                print("** instance id missing **")
+                print("** class doesn't exist **")
         else:
             print("** class doesn't exist **")
 
